@@ -16,6 +16,8 @@ import {
 } from "./nowsecure-snapshot";
 import type { PullReportResponse } from "./types/platform";
 import * as github from "@actions/github";
+import 'source-map-support/register'
+import { githubJobSummary } from "./nowsecure-summary";
 
 const { writeFile } = promises;
 const sleep = promisify(setTimeout);
@@ -29,6 +31,7 @@ async function run() {
 
     const enableSarif = core.getBooleanInput("enable_sarif");
     const enableDependencies = core.getBooleanInput("enable_dependencies");
+    const enableSummary = core.getInput("enable_summary");
     const githubToken = core.getInput("github_token");
     const githubCorrelator = core.getInput("github_correlator");
     const ns = new NowSecure(platformToken, apiUrl, labApiUrl);
@@ -36,6 +39,14 @@ async function run() {
     let reportId = core.getInput("report_id");
     if (reportId) {
       const report = await ns.pullReport(reportId);
+
+      await writeFile("NowSecure-report.json", JSON.stringify(report));
+      if (enableSummary) {
+        const summary = await githubJobSummary(enableSummary, Promise.resolve(report));
+        console.log(summary.stringify());
+        await core.summary.write();
+      }
+
       if (enableDependencies) {
         await outputToDependencies(
           report,
@@ -48,6 +59,7 @@ async function run() {
       if (enableSarif) {
         await outputToSarif(report, labUrl);
       }
+
       return;
     }
 
@@ -72,7 +84,7 @@ async function run() {
 
     // Poll Platform to resolve the report ID to a report.
     // GitHub Actions will handle the timeout for us in the event something goes awry.
-    let report = null;
+    let report: PullReportResponse | null = null;
     for (;;) {
       console.log("Checking for NowSecure report...");
       report = await ns.pullReport(reportId);
@@ -86,6 +98,11 @@ async function run() {
       }
 
       await sleep(pollInterval);
+    }
+
+    if (enableSummary) {
+      const summary = await githubJobSummary(enableSummary, Promise.resolve(report));
+      await core.summary.write();
     }
 
     if (enableDependencies) {

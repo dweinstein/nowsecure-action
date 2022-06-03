@@ -27,6 +27,9 @@ inputs:
   group_id:
     required: true
     description: "Group ID for the application in Platform."
+  report_id:
+    required: false
+    description: "Report ID for an existing report."
   headstart_ms:
     required: false
     description: "Head start in milliseconds to give Platform before an application is polled for details. Default is 5 minutes."
@@ -43,6 +46,10 @@ inputs:
     required: false
     description: "Enable posting of dependencies results to GitHub."
     default: false
+  enable_summary:
+    required: false
+    description: "Enable job summary output ('short' or 'long')."
+    default: "short"
   github_token:
     required: false
     default: ${{ github.token }}
