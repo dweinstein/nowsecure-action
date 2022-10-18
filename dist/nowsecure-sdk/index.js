@@ -1675,7 +1675,7 @@ run()
  *
  */
 function convertToSarif(data) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     return __awaiter(this, void 0, void 0, function* () {
         const rules = [];
         for (const issue of data) {
@@ -1695,7 +1695,7 @@ function convertToSarif(data) {
                 id: sha256(`${issue.type}${(_a = issue.algorithm) !== null && _a !== void 0 ? _a : issue.transport}`),
                 name: `${title(issue)} (${(_b = issue.algorithm) !== null && _b !== void 0 ? _b : issue.transport})`,
                 shortDescription: {
-                    text: issue.type,
+                    text: `${title(issue)} (${(_c = issue.algorithm) !== null && _c !== void 0 ? _c : issue.transport})`,
                 },
                 fullDescription: {
                     text: issueSummary,
@@ -1720,11 +1720,11 @@ function convertToSarif(data) {
             const level = "error";
             const bt0 = issue.backtrace[0];
             const simpleResult = {
-                ruleId: sha256(`${issue.type}${(_c = issue.algorithm) !== null && _c !== void 0 ? _c : issue.transport}`),
+                ruleId: sha256(`${issue.type}${(_d = issue.algorithm) !== null && _d !== void 0 ? _d : issue.transport}`),
                 message: {
                     // Markdown doesn't work here. We render our information in the "help"
                     // field in the reporting descriptor.
-                    text: `${issueDescription} ${bt0.symbol} ${(_d = bt0.source) === null || _d === void 0 ? void 0 : _d.path}`,
+                    text: `${issueDescription} ${bt0.symbol} ${(_e = bt0.source) === null || _e === void 0 ? void 0 : _e.path}`,
                 },
                 level,
                 locations: [
@@ -1733,12 +1733,12 @@ function convertToSarif(data) {
                         // information for a file that does not exist.
                         physicalLocation: {
                             artifactLocation: {
-                                uri: (_f = (_e = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _e === void 0 ? void 0 : _e.path) !== null && _f !== void 0 ? _f : "unknown",
+                                uri: (_g = (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.path) !== null && _g !== void 0 ? _g : "unknown",
                                 uriBaseId: "%SRCROOT%",
                             },
                             region: {
-                                startLine: (_h = (_g = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _g === void 0 ? void 0 : _g.line) !== null && _h !== void 0 ? _h : 1,
-                                endLine: (_k = (_j = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _j === void 0 ? void 0 : _j.line) !== null && _k !== void 0 ? _k : 1
+                                startLine: (_j = (_h = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _h === void 0 ? void 0 : _h.line) !== null && _j !== void 0 ? _j : 1,
+                                endLine: (_l = (_k = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _k === void 0 ? void 0 : _k.line) !== null && _l !== void 0 ? _l : 1
                             },
                         },
                     },
