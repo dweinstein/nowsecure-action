@@ -1,0 +1,20 @@
+name: "NowSecure: SDK"
+description: "Convert NowSecure SDK result to SARIF to be uploaded to GHAS"
+author: "NowSecure Inc."
+inputs:
+  api_url:
+    required: true
+    description: "Endpoint to get data"
+    default: "https://api.nowsecure.com"
+  project_id:
+    required: true
+    description: "Project ID for data"
+  github_token:
+    required: false
+    default: ${{ github.token }}
+runs:
+  using: "node16"
+  main: "../dist/nowsecure-sdk/index.js"
+branding:
+  icon: alert-triangle
+  color: red
