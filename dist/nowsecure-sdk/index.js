@@ -1718,7 +1718,11 @@ function convertToSarif(data) {
         for (const issue of data) {
             const issueDescription = description(issue);
             const level = "error";
-            const bt0 = issue.backtrace[0];
+            // const bt0 = issue.backtrace[0];
+            const [bt0, _] = issue.backtrace.filter(bt => {
+                var _a;
+                return (_a = bt.source) === null || _a === void 0 ? void 0 : _a.path;
+            });
             const simpleResult = {
                 ruleId: sha256(`${issue.type}${(_d = issue.algorithm) !== null && _d !== void 0 ? _d : issue.transport}`),
                 message: {
