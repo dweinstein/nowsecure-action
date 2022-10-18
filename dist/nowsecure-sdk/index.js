@@ -1729,7 +1729,7 @@ function convertToSarif(data) {
                     return `${(_f = bt.symbol) !== null && _f !== void 0 ? _f : alt}\n` +
                         `within ${maybeWithin}` +
                         "\n";
-                })];
+                })].join("\n");
             const simpleResult = {
                 ruleId: sha256(`${issue.type}${(_d = issue.algorithm) !== null && _d !== void 0 ? _d : issue.transport}`),
                 message: {
