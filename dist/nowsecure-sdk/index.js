@@ -1722,7 +1722,7 @@ function convertToSarif(data) {
                 var _a;
                 return (_a = bt.source) === null || _a === void 0 ? void 0 : _a.path;
             });
-            const btText = ["Code Location\n", ...issue.backtrace.map(bt => {
+            const btText = ["\n\n=== Code Location===\n\n", ...issue.backtrace.map(bt => {
                     var _a, _b, _c, _d, _e, _f;
                     const alt = `??? [offset: ${bt.offset}]`;
                     const maybeWithin = ((_a = bt.module) === null || _a === void 0 ? void 0 : _a.path) ? `${(_b = bt.module) === null || _b === void 0 ? void 0 : _b.path} (${(_c = bt.module) === null || _c === void 0 ? void 0 : _c.fingerprint}) (${(_d = bt.source) === null || _d === void 0 ? void 0 : _d.path} line: ${(_e = bt.source) === null || _e === void 0 ? void 0 : _e.line})` : "?";
