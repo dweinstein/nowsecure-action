@@ -1726,8 +1726,8 @@ function convertToSarif(data) {
                                 uriBaseId: "%SRCROOT%",
                             },
                             region: {
-                                startLine: (_g = (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.line) !== null && _g !== void 0 ? _g : 0,
-                                endLine: (_j = (_h = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _h === void 0 ? void 0 : _h.line) !== null && _j !== void 0 ? _j : 0
+                                startLine: (_g = (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.line) !== null && _g !== void 0 ? _g : 1,
+                                endLine: (_j = (_h = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _h === void 0 ? void 0 : _h.line) !== null && _j !== void 0 ? _j : 1
                             },
                         },
                     },
