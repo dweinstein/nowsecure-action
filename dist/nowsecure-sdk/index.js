@@ -1735,7 +1735,8 @@ function convertToSarif(data) {
                 message: {
                     // Markdown doesn't work here. We render our information in the "help"
                     // field in the reporting descriptor.
-                    text: `${issueDescription}\n${btText}`,
+                    text: `${issueDescription}`,
+                    markdown: `${btText}`
                 },
                 level,
                 locations: [
