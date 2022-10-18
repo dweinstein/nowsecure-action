@@ -1641,6 +1641,15 @@ class SDKReportClient {
             return r.result;
         });
     }
+    htmlReport(projectId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const r = yield __classPrivateFieldGet(this, _SDKReportClient_client, "f").get(`${__classPrivateFieldGet(this, _SDKReportClient_apiUrl, "f")}/projects/${projectId}/issues`, {
+                accept: 'text/html'
+            });
+            const body = yield r.readBody();
+            return body;
+        });
+    }
 }
 exports.SDKReportClient = SDKReportClient;
 _SDKReportClient_client = new WeakMap(), _SDKReportClient_apiUrl = new WeakMap();
@@ -1652,6 +1661,8 @@ function run() {
         const data = yield client.issues(projectId);
         const sarif = yield convertToSarif(data);
         yield writeFile("sdk.sarif", JSON.stringify(sarif));
+        const reportHTML = yield client.htmlReport(projectId);
+        yield writeFile("report.html", reportHTML);
     });
 }
 run()
@@ -1664,7 +1675,7 @@ run()
  *
  */
 function convertToSarif(data) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     return __awaiter(this, void 0, void 0, function* () {
         const rules = [];
         for (const issue of data) {
@@ -1682,7 +1693,7 @@ function convertToSarif(data) {
             }
             rules.push({
                 id: sha256(`${issue.type}${(_a = issue.algorithm) !== null && _a !== void 0 ? _a : issue.transport}`),
-                name: issue.type,
+                name: `${title(issue)} (${(_b = issue.algorithm) !== null && _b !== void 0 ? _b : issue.transport})`,
                 shortDescription: {
                     text: issue.type,
                 },
@@ -1709,11 +1720,11 @@ function convertToSarif(data) {
             const level = "error";
             const bt0 = issue.backtrace[0];
             const simpleResult = {
-                ruleId: sha256(`${issue.type}${(_b = issue.algorithm) !== null && _b !== void 0 ? _b : issue.transport}`),
+                ruleId: sha256(`${issue.type}${(_c = issue.algorithm) !== null && _c !== void 0 ? _c : issue.transport}`),
                 message: {
                     // Markdown doesn't work here. We render our information in the "help"
                     // field in the reporting descriptor.
-                    text: `${issueDescription} ${bt0.symbol} ${(_c = bt0.source) === null || _c === void 0 ? void 0 : _c.path}`,
+                    text: `${issueDescription} ${bt0.symbol} ${(_d = bt0.source) === null || _d === void 0 ? void 0 : _d.path}`,
                 },
                 level,
                 locations: [
@@ -1722,12 +1733,12 @@ function convertToSarif(data) {
                         // information for a file that does not exist.
                         physicalLocation: {
                             artifactLocation: {
-                                uri: (_e = (_d = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _d === void 0 ? void 0 : _d.path) !== null && _e !== void 0 ? _e : "unknown",
+                                uri: (_f = (_e = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _e === void 0 ? void 0 : _e.path) !== null && _f !== void 0 ? _f : "unknown",
                                 uriBaseId: "%SRCROOT%",
                             },
                             region: {
-                                startLine: (_g = (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.line) !== null && _g !== void 0 ? _g : 1,
-                                endLine: (_j = (_h = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _h === void 0 ? void 0 : _h.line) !== null && _j !== void 0 ? _j : 1
+                                startLine: (_h = (_g = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _g === void 0 ? void 0 : _g.line) !== null && _h !== void 0 ? _h : 1,
+                                endLine: (_k = (_j = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _j === void 0 ? void 0 : _j.line) !== null && _k !== void 0 ? _k : 1
                             },
                         },
                     },
@@ -1761,6 +1772,16 @@ function description(issue) {
             return "While the application runs, cryptographic APIs are monitored to identify any insecure usage of cryptographic algorithms or primitives.  In this case, insecure cryptographic hashing algorithms are monitored.";
         case "weak-encryption":
             return "While the application runs, cryptographic APIs are monitored to identify any insecure usage of cryptographic algorithms or primitives.  In this case, insecure cryptographic hashing algorithms are monitored.";
+        case "sensitive-data-leak":
+            return "Sensitive Data Exposed and Modifiable over the Network";
+    }
+}
+function title(issue) {
+    switch (issue.type) {
+        case "weak-hashing":
+            return "Weak Cryptographic Hashing Algorithms";
+        case "weak-encryption":
+            return "Weak Cryptographic Encryption Algorithms";
         case "sensitive-data-leak":
             return "Sensitive Data Exposed and Modifiable over the Network";
     }
