@@ -1675,7 +1675,7 @@ run()
  *
  */
 function convertToSarif(data) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     return __awaiter(this, void 0, void 0, function* () {
         const rules = [];
         for (const issue of data) {
@@ -1718,17 +1718,24 @@ function convertToSarif(data) {
         for (const issue of data) {
             const issueDescription = description(issue);
             const level = "error";
-            // const bt0 = issue.backtrace[0];
             const [bt0, _] = issue.backtrace.filter(bt => {
                 var _a;
                 return (_a = bt.source) === null || _a === void 0 ? void 0 : _a.path;
             });
+            const btText = ["Code Location\n", ...issue.backtrace.map(bt => {
+                    var _a, _b, _c, _d, _e, _f;
+                    const alt = `??? [offset: ${bt.offset}]`;
+                    const maybeWithin = ((_a = bt.module) === null || _a === void 0 ? void 0 : _a.path) ? `${(_b = bt.module) === null || _b === void 0 ? void 0 : _b.path} (${(_c = bt.module) === null || _c === void 0 ? void 0 : _c.fingerprint}) (${(_d = bt.source) === null || _d === void 0 ? void 0 : _d.path} line: ${(_e = bt.source) === null || _e === void 0 ? void 0 : _e.line})` : "?";
+                    return `${(_f = bt.symbol) !== null && _f !== void 0 ? _f : alt}\n` +
+                        `within ${maybeWithin}` +
+                        "\n";
+                })];
             const simpleResult = {
                 ruleId: sha256(`${issue.type}${(_d = issue.algorithm) !== null && _d !== void 0 ? _d : issue.transport}`),
                 message: {
                     // Markdown doesn't work here. We render our information in the "help"
                     // field in the reporting descriptor.
-                    text: `${issueDescription} ${bt0.symbol} ${(_e = bt0.source) === null || _e === void 0 ? void 0 : _e.path}`,
+                    text: `${issueDescription}\n${btText}`,
                 },
                 level,
                 locations: [
@@ -1737,12 +1744,12 @@ function convertToSarif(data) {
                         // information for a file that does not exist.
                         physicalLocation: {
                             artifactLocation: {
-                                uri: (_g = (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.path) !== null && _g !== void 0 ? _g : "unknown",
+                                uri: (_f = (_e = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _e === void 0 ? void 0 : _e.path) !== null && _f !== void 0 ? _f : "unknown",
                                 uriBaseId: "%SRCROOT%",
                             },
                             region: {
-                                startLine: (_j = (_h = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _h === void 0 ? void 0 : _h.line) !== null && _j !== void 0 ? _j : 1,
-                                endLine: (_l = (_k = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _k === void 0 ? void 0 : _k.line) !== null && _l !== void 0 ? _l : 1
+                                startLine: (_h = (_g = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _g === void 0 ? void 0 : _g.line) !== null && _h !== void 0 ? _h : 1,
+                                endLine: (_k = (_j = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _j === void 0 ? void 0 : _j.line) !== null && _k !== void 0 ? _k : 1
                             },
                         },
                     },
