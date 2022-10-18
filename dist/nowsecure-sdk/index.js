@@ -1664,7 +1664,7 @@ run()
  *
  */
 function convertToSarif(data) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     return __awaiter(this, void 0, void 0, function* () {
         const rules = [];
         for (const issue of data) {
@@ -1722,12 +1722,12 @@ function convertToSarif(data) {
                         // information for a file that does not exist.
                         physicalLocation: {
                             artifactLocation: {
-                                uri: (_d = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _d === void 0 ? void 0 : _d.path,
+                                uri: (_e = (_d = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _d === void 0 ? void 0 : _d.path) !== null && _e !== void 0 ? _e : "unknown",
                                 uriBaseId: "%SRCROOT%",
                             },
                             region: {
-                                startLine: (_e = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _e === void 0 ? void 0 : _e.line,
-                                endLine: (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.line
+                                startLine: (_g = (_f = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _f === void 0 ? void 0 : _f.line) !== null && _g !== void 0 ? _g : 0,
+                                endLine: (_j = (_h = bt0 === null || bt0 === void 0 ? void 0 : bt0.source) === null || _h === void 0 ? void 0 : _h.line) !== null && _j !== void 0 ? _j : 0
                             },
                         },
                     },
