@@ -1710,7 +1710,7 @@ function convertToSarif(data) {
                 help: {
                     // NOTE: In practice this should not display on the GitHub UI.
                     text: "NowSecure only provides recommendations in a Markdown format.",
-                    markdown: `${markdown}\n${action(issue)}`,
+                    markdown: `${markdown}\n${action(issue)}\n${detail(issue)}\n${backtrace(issue)}`,
                 },
             });
         }
@@ -1722,14 +1722,6 @@ function convertToSarif(data) {
                 var _a;
                 return (_a = bt.source) === null || _a === void 0 ? void 0 : _a.path;
             });
-            const btText = ["\n\n=== Code Location===\n\n", ...issue.backtrace.map(bt => {
-                    var _a, _b, _c, _d, _e, _f;
-                    const alt = `??? [offset: ${bt.offset}]`;
-                    const maybeWithin = ((_a = bt.module) === null || _a === void 0 ? void 0 : _a.path) ? `${(_b = bt.module) === null || _b === void 0 ? void 0 : _b.path} (${(_c = bt.module) === null || _c === void 0 ? void 0 : _c.fingerprint}) (${(_d = bt.source) === null || _d === void 0 ? void 0 : _d.path} line: ${(_e = bt.source) === null || _e === void 0 ? void 0 : _e.line})` : "?";
-                    return `${(_f = bt.symbol) !== null && _f !== void 0 ? _f : alt}\n` +
-                        `within ${maybeWithin}` +
-                        "\n";
-                })].join("\n");
             const simpleResult = {
                 ruleId: sha256(`${issue.type}${(_d = issue.algorithm) !== null && _d !== void 0 ? _d : issue.transport}`),
                 message: {
@@ -1797,6 +1789,30 @@ function title(issue) {
         case "sensitive-data-leak":
             return "Sensitive Data Exposed and Modifiable over the Network";
     }
+}
+function detail(issue) {
+    switch (issue.type) {
+        case "sensitive-data-leak":
+            return `# Details
+- Transport: ${issue.transport}
+- URL: ${issue.target}
+- First seen: ${issue.meta.firstSeenAt}
+- Last seen: ${issue.meta.lastSeenAt}
+`;
+        default:
+            return "";
+    }
+}
+function backtrace(issue) {
+    const btText = ["# Code Location===\n\n", ...issue.backtrace.map(bt => {
+            var _a, _b, _c, _d, _e, _f;
+            const alt = `??? [offset: ${bt.offset}]`;
+            const maybeWithin = ((_a = bt.module) === null || _a === void 0 ? void 0 : _a.path) ? `${(_b = bt.module) === null || _b === void 0 ? void 0 : _b.path} (${(_c = bt.module) === null || _c === void 0 ? void 0 : _c.fingerprint}) (${(_d = bt.source) === null || _d === void 0 ? void 0 : _d.path} line: ${(_e = bt.source) === null || _e === void 0 ? void 0 : _e.line})` : "?";
+            return `${(_f = bt.symbol) !== null && _f !== void 0 ? _f : alt}\n` +
+                `within ${maybeWithin}` +
+                "\n";
+        })].join("\n");
+    return btText;
 }
 function action(issue) {
     switch (issue.type) {
