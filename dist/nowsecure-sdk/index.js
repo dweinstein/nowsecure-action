@@ -1710,7 +1710,7 @@ function convertToSarif(data) {
                 help: {
                     // NOTE: In practice this should not display on the GitHub UI.
                     text: "NowSecure only provides recommendations in a Markdown format.",
-                    markdown,
+                    markdown: `${markdown}\n${action(issue)}`,
                 },
             });
         }
@@ -1796,6 +1796,17 @@ function title(issue) {
             return "Weak Cryptographic Encryption Algorithms";
         case "sensitive-data-leak":
             return "Sensitive Data Exposed and Modifiable over the Network";
+    }
+}
+function action(issue) {
+    switch (issue.type) {
+        case "sensitive-data-leak":
+            return `# Action
+Enforce the use of SSL/TLS for all transport channels in which sensitive information, session tokens, and/or other sensitive data is going to be communicated to a backend API or web service.
+Properly validate the SSL/TLS certificate to ensure it is signed by a trusted certificate authority (CA) as well as contains the correct hostname.
+`;
+        default:
+            return "";
     }
 }
 /**
