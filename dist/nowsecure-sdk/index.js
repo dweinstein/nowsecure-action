@@ -1805,11 +1805,11 @@ function detail(issue) {
 }
 function backtrace(issue) {
     const btText = ["# Code Location\n\n", ...issue.backtrace.map(bt => {
-            var _a, _b, _c, _d, _e, _f, _g;
+            var _a, _b, _c, _d, _e, _f, _g, _h;
             const alt = `??? [offset: ${bt.offset}]`;
-            const lineInfo = ((_a = bt.source) === null || _a === void 0 ? void 0 : _a.path) ? `(${(_b = bt.source) === null || _b === void 0 ? void 0 : _b.path} line: ${(_c = bt.source) === null || _c === void 0 ? void 0 : _c.line})` : "";
-            const maybeWithin = ((_d = bt.module) === null || _d === void 0 ? void 0 : _d.path) ? `${(_e = bt.module) === null || _e === void 0 ? void 0 : _e.path} (${(_f = bt.module) === null || _f === void 0 ? void 0 : _f.fingerprint}) ${lineInfo}` : "?";
-            return `- ${(_g = bt.symbol) !== null && _g !== void 0 ? _g : alt}\n` +
+            const lineInfo = (((_a = bt.source) === null || _a === void 0 ? void 0 : _a.path) && ((_b = bt.source) === null || _b === void 0 ? void 0 : _b.line)) ? `(${(_c = bt.source) === null || _c === void 0 ? void 0 : _c.path} line: ${(_d = bt.source) === null || _d === void 0 ? void 0 : _d.line})` : "";
+            const maybeWithin = ((_e = bt.module) === null || _e === void 0 ? void 0 : _e.path) ? `${(_f = bt.module) === null || _f === void 0 ? void 0 : _f.path} (${(_g = bt.module) === null || _g === void 0 ? void 0 : _g.fingerprint}) ${lineInfo}` : "?";
+            return `- ${(_h = bt.symbol) !== null && _h !== void 0 ? _h : alt}\n` +
                 `\t- within ${maybeWithin}` +
                 "\n";
         })].join("\n");
